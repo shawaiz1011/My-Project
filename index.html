@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Muhammad Shawaiz — Space Portfolio</title>
+  <meta name="description" content="Space-themed portfolio with animated stars, moon, social links and modern UI." />
+  <style>
+    :root{
+      --bg:#05030a;
+      --card:rgba(255,255,255,0.03);
+      --muted:#9aa6bf;
+      --accent:#7c3aed;
+      --accent-2:#06b6d4;
+      --glass: rgba(255,255,255,0.03);
+      --cursor-size:18px;
+      --max-width:1200px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial; color:#e9f0ff; background:var(--bg); overflow-x:hidden;
+    }
+
+    /* Starfield layers for 4k-ish detail */
+    .space{
+      position:fixed; inset:0; z-index:-3; overflow:hidden;
+      background: radial-gradient(1200px 600px at 20% 20%, rgba(124,58,237,0.06), transparent 6%),
+                  radial-gradient(900px 400px at 85% 80%, rgba(6,182,212,0.04), transparent 6%),
+                  linear-gradient(180deg,#030214 0%, #070616 50%, #02020a 100%);
+    }
+    .stars, .stars2, .stars3{position:absolute; inset:0; background-repeat:repeat;}
+    /* Use multiple backgrounds to emulate dense 4k stars */
+    .stars{background-image:radial-gradient(#fff 0.8px, transparent 0.9px), radial-gradient(#fff 0.6px, transparent 0.7px); background-size:100px 100px, 60px 60px; opacity:0.9; animation: drift 80s linear infinite}
+    .stars2{background-image:radial-gradient(#fff 0.9px, transparent 1px); background-size:180px 180px; opacity:0.6; animation: drift 120s linear infinite}
+    .stars3{background-image:radial-gradient(#fff 1px, transparent 1.2px); background-size:40px 40px; opacity:0.35; animation: drift 60s linear infinite}
+    @keyframes drift{from{transform:translateY(0) translateX(0)} to{transform:translateY(-200px) translateX(300px)}}
+
+    /* Moon */
+    .moon{position:fixed; right:6vw; top:6vh; width:140px; height:140px; border-radius:50%; background: radial-gradient(circle at 30% 30%, #f3f3f5, #cfcfd6 20%, #9b9ba6 60%, #2a2a35 100%); box-shadow:0 12px 80px rgba(0,0,0,0.6); transform:translateZ(0); animation: slow-rotate 40s linear infinite}
+    @keyframes slow-rotate{from{transform:rotate(0deg)} to{transform:rotate(360deg)}}
+
+    /* subtle glow */
+    .moon::after{content:''; position:absolute; inset:-20px; border-radius:50%; filter:blur(24px); background:radial-gradient(circle, rgba(124,58,237,0.06), transparent 30%); z-index:-1}
+
+    /* Page layout */
+    .wrap{position:relative; width:100%; max-width:var(--max-width); margin:40px auto; padding:28px}
+    header{display:flex; align-items:center; justify-content:space-between; gap:12px}
+    .brand{display:flex; align-items:center; gap:12px}
+    .logo{width:56px; height:56px; border-radius:12px; background:linear-gradient(135deg,var(--accent),var(--accent-2)); display:grid; place-items:center; box-shadow:0 8px 40px rgba(124,58,237,0.12); transform:translateZ(0)}
+    .brand h1{font-size:18px;margin:0}
+    .brand p{margin:0;color:var(--muted);font-size:13px}
+
+    nav{display:flex; gap:10px}
+    .nav-link{color:var(--muted); text-decoration:none; padding:8px 12px; border-radius:10px; transition:all .25s; font-size:14px;font-weight: bold;}
+    .nav-link:hover{color:#25817a; transform:translateY(-4px) scale(1.03)}
+
+    main{margin-top:22px}
+    .hero{display:grid; grid-template-columns:1fr 360px; gap:20px; align-items:start}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:22px; border-radius:14px; box-shadow:0 10px 40px rgba(2,6,23,0.6); backdrop-filter: blur(6px); transition:transform .3s}
+    .card:hover{transform:translateY(-8px) scale(1.01)}
+
+    .intro h2{font-size:34px; margin:0 0 6px 0}
+    .intro p{color:var(--muted); margin:0 0 14px 0}
+    .cta{display:flex; gap:10px}
+    .btn{padding:10px 14px; border-radius:12px; font-weight:700; border:0; cursor:pointer; transition:all .2s}
+    .btn-primary{background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:white}
+    .btn-primary:hover{transform:translateY(-4px) rotate(-1deg)}
+    .btn-ghost{background:transparent; color:var(--muted); border:1px solid rgba(255,255,255,0.04)}
+
+    /* Social links section */
+    .socials{display:flex; flex-direction:column; gap:12px}
+    .social-grid{display:flex; gap:10px; flex-wrap:wrap}
+    .social-card{display:flex; gap:10px; align-items:center; padding:10px 12px; border-radius:12px; background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); cursor:pointer; transition:transform .28s, box-shadow .28s}
+    .social-card:hover{transform:translateY(-8px) scale(1.03); box-shadow:0 18px 40px rgba(2,6,23,0.6)}
+    .social-card svg{width:28px;height:28px; flex:0 0 28px}
+    .social-label{font-weight:700}
+    .social-sub{color:var(--muted); font-size:13px}
+
+    /* Projects */
+    .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:12px}
+    .project{overflow:hidden; border-radius:12px}
+    .project img{width:100%; height:160px; object-fit:cover; display:block; transition:transform .6s cubic-bezier(.2,.9,.3,1)}
+    .project:hover img{transform:scale(1.08) rotate(-1deg)}
+
+    /* Skills (AI instead of Python) */
+    .skills{display:flex; gap:10px; margin-top:12px}
+    .skill{flex:1; padding:12px; border-radius:10px}
+
+    /* Contact small */
+    form{display:grid; gap:10px}
+    input, textarea{background:transparent; border:1px solid rgba(255,255,255,0.06); padding:10px; border-radius:8px; color:inherit}
+
+    footer{margin-top:22px; color:var(--muted); display:flex; justify-content:space-between; align-items:center}
+
+    /* Cursor follower */
+    .cursor{position:fixed; top:0; left:0; width:var(--cursor-size); height:var(--cursor-size); border-radius:50%; pointer-events:none; transform:translate(-50%,-50%); z-index:9999; transition:background .12s, transform .08s, width .12s, height .12s}
+
+    /* Hover interaction states */
+    .hover-grow{transition:transform .18s}
+    .hover-grow:hover{transform:scale(1.06) translateY(-6px)}
+
+    /* Responsive */
+    @media (max-width:1000px){ .hero{grid-template-columns:1fr 320px} .grid{grid-template-columns:repeat(2,1fr)} }
+    @media (max-width:720px){ header nav{display:none} .hero{grid-template-columns:1fr} .grid{grid-template-columns:1fr} }
+
+    /* Accessibility */
+    @media (prefers-reduced-motion: reduce){ *{animation:none!important; transition:none!important} }
+  </style>
+</head>
+<body>
+  <div class="space">
+    <div class="stars"></div>
+    <div class="stars2"></div>
+    <div class="stars3"></div>
+    <div class="moon" aria-hidden="true"></div>
+  </div>
+
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true">
+          <!-- small logo -->
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Logo">
+            <rect x="8" y="8" width="84" height="84" rx="14" fill="white" opacity="0.06"/>
+            <path d="M26 74 L26 26 L40 26 L50 46 L60 26 L74 26 L74 74 L60 74 L50 54 L40 74 Z" fill="white"/>
+          </svg>
+        </div>
+        <div>
+          <h1>Muhammad Shawaiz</h1>
+          <p>Front-end Developer • Designer • Ethical Hacker • 3D Animator</p>
+        </div>
+      </div>
+      <nav aria-label="main-nav">
+        <a class="nav-link" href="#projects">Projects</a>
+        <a class="nav-link" href="#socials">Socials</a>
+        <a class="nav-link" href="#contact">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="card intro">
+          <h2>Hello I'm — <span style="color:var(--accent)">Muhammad Shawaiz</span></h2>
+         <strong>About me </strong> <p>My name is Muhammad Shawaiz, and I am from Pakistan. I have recently finished my intermediate education and now preparing to join a Computer Science program at university. Along with my studies, I am improving my technical skills through different short and long courses, including a Full-Stack Web Development program at Saylani Mass IT Sukkur, and for the past two months, I have been enrolled in an Animation 3D and VFX course at IBA Sukkur. This course is helping me improve my creativity and design sense, which also supports my web development work by giving me a better understanding of visual design and user experience.I am also learning about Artificial Intelligence (AI) and have studied the basics of ethical hacking to understand cybersecurity better from IBA Sukkur 
+
+I work with modern web tools to design and build responsive and user-friendly websites. 
+I aim to create clean, easy-to-use, and reliable websites that perform well and are ready for real-world use.</p>
+          <div class="cta">
+            <button class="btn btn-primary hover-grow" id="view-work">View Projects</button>
+            <a class="btn btn-ghost hover-grow" href="#socials">My Socials</a>
+          </div>
+
+          <div style="margin-top:16px; color:var(--muted)">Available for freelance · Based in Pakistan</div>
+
+          <div class="skills">
+            <div class="skill card"><strong>Front-end</strong><div style="color:var(--muted);font-size:13px">HTML • CSS • JavaScript</div></div>
+            <div class="skill card"><strong>Design</strong><div style="color:var(--muted);font-size:13px">Figma • Prototyping</div></div>
+            <div class="skill card"><strong>Ethical Hacker</strong><div style="color:var(--muted);font-size:13px">Kali Linux • Wireshark</div></div>
+          </div>
+        </div>
+
+        <aside class="card socials" id="socials">
+          <h3 style="margin:0 0 8px 0">Connect with me</h3>
+          <p style="margin:0 0 12px 0;color:var(--muted)">Click any icon to open my profile.</p>
+
+          <div class="social-grid">
+
+            <a class="social-card" href="https://www.facebook.com/shawaiz.waseb" target="_blank" rel="noopener noreferrer">
+              <!-- Facebook SVG -->
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M22 12.07C22 6.48 17.52 2 11.93 2S1.86 6.48 1.86 12.07C1.86 17.03 5.61 21.08 10.44 21.93v-6.64H7.9v-3.22h2.54V9.41c0-2.5 1.49-3.88 3.78-3.88 1.09 0 2.23.2 2.23.2v2.45h-1.25c-1.23 0-1.62.77-1.62 1.56v1.86h2.76l-.44 3.22h-2.32V21.9C18.39 21.08 22 17.03 22 12.07z"/>
+              </svg>
+              <div>
+                <div class="social-label">Facebook</div>
+                <div class="social-sub">https://www.facebook.com/shawaiz.waseb</div>
+              </div>
+            </a>
+
+            <a class="social-card" href="https://www.instagram.com/m.shawaizjutt/" target="_blank" rel="noopener noreferrer">
+              <!-- Instagram SVG -->
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm5 6.2a4.8 4.8 0 1 0 0 9.6 4.8 4.8 0 0 0 0-9.6zM19.5 6.5a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4z"/>
+              </svg>
+              <div>
+                <div class="social-label">Instagram</div>
+                <div class="social-sub">https://www.instagram.com/m.shawaizjutt/</div>
+              </div>
+            </a>
+
+            <a class="social-card" href="https://www.linkedin.com/in/muhammad-shawaiz-jutt-621ab1385/" target="_blank" rel="noopener noreferrer">
+              <!-- LinkedIn SVG -->
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M4.98 3.5a2.5 2.5 0 1 1-.002 0zM3 8.98h4v12H3zM9 8.98h3.84v1.66h.05c.54-1.02 1.86-2.1 3.83-2.1C21.3 8.54 22 10.6 22 13.9V20h-4v-5.3c0-1.26-.02-2.88-1.76-2.88-1.76 0-2.03 1.38-2.03 2.8V20H9z"/>
+              </svg>
+              <div>
+                <div class="social-label">LinkedIn</div>
+                <div class="social-sub">https://www.linkedin.com/in/muhammad-shawaiz-jutt-621ab1385/</div>
+              </div>
+            </a>
+
+            <a class="social-card" href="https://github.com/shawaiz1011" target="_blank" rel="noopener noreferrer">
+              <!-- GitHub SVG -->
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 .5C5.65.5.5 5.64.5 12c0 5.08 3.29 9.4 7.86 10.92.58.1.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.53-1.36-1.3-1.72-1.3-1.72-1.06-.72.08-.71.08-.71 1.17.08 1.79 1.2 1.79 1.2 1.04 1.78 2.73 1.27 3.4.97.11-.75.41-1.27.74-1.56-2.55-.29-5.24-1.27-5.24-5.66 0-1.25.45-2.27 1.19-3.07-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.17a11.13 11.13 0 0 1 2.9-.39c.98.01 1.97.13 2.9.39 2.2-1.48 3.17-1.17 3.17-1.17.63 1.59.23 2.76.11 3.05.74.8 1.19 1.82 1.19 3.07 0 4.4-2.7 5.36-5.27 5.64.42.36.79 1.08.79 2.18 0 1.57-.01 2.84-.01 3.23 0 .31.21.67.8.56C20.71 21.4 24 17.08 24 12c0-6.36-5.15-11.5-12-11.5z"/>
+              </svg>
+              <div>
+                <div class="social-label">GitHub</div>
+                <div class="social-sub">https://github.com/shawaiz1011</div>
+              </div>
+            </a>
+
+            <a class="social-card" href="mailto:shawaiz@example.com" target="_blank" rel="noopener noreferrer">
+              <!-- Mail SVG -->
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+              </svg>
+              <div>
+                <div class="social-label">Email</div>
+                <div class="social-sub">muhammadshawaizjutt18@gmail.com</div>
+              </div>
+            </a>
+
+            <a class="social-card" href="https://wa.me/923001234567" target="_blank" rel="noopener noreferrer">
+              <!-- WhatsApp SVG -->
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M20.5 3.5A11 11 0 1 0 6.26 20.8L3 21l.5-3.26A11 11 0 0 0 20.5 3.5zm-9.5 15.1c-1.7 0-3.1-.5-4.3-1.4l-.3-.2-2.6.7.7-2.5-.2-.3A8.6 8.6 0 1 1 11 19.6zm4.9-6.6c-.3-.1-1.8-.9-2.1-1-.3-.1-.5-.2-.7.2s-.8 1-.9 1.2c-.2.3-.4.4-.7.2-1.9-1-3.2-1.8-4.5-3.9-.3-.6.3-1.1.6-1.3.2-.1.4-.2.6-.2.2 0 .4 0 .6 0 .2 0 .5-.1.8-.1.2 0 .4 0 .6.1.3.1.8.3 1.3.6.5.3 1 .5 1.7.8.6.3 1 .2 1.3 0 .3-.2.9-.6 1.3-.9.3-.2.6-.2.9 0 .2.1.8.6.9 1 .1.3.1.6 0 .9-.1.3-.5.6-.8.7z"/>
+              </svg>
+              <div>
+                <div class="social-label">WhatsApp</div>
+                <div class="social-sub">+92 331 3711752</div>
+              </div>
+            </a>
+
+          </div>
+        </aside>
+      </section>
+
+      <section id="projects" style="margin-top:12px">
+        <h3>Selected Projects</h3>
+        <div class="grid">
+          <article class="project card" tabindex="0"><img src="https://res.cloudinary.com/upwork-cloud/image/upload/c_scale,w_1000/v1709844099/catalog/1369269199314866176/hrbjczdbf4o5jcbvg56j.webp" alt="Project 1"><div style="padding:10px"><strong>Video Platform UI</strong><p style="margin:6px 0 0;color:var(--muted)">Animated player controls and responsive layout.</p></div></article>
+          <article class="project card" tabindex="0"><img src="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1600&q=80" alt="Project 2"><div style="padding:10px"><strong>E-commerce Landing</strong><p style="margin:6px 0 0;color:var(--muted)">Hover interactions and micro-animations.</p></div></article>
+          <article class="project card" tabindex="0"><img src="https://images.unsplash.com/photo-1527430253228-e93688616381?auto=format&fit=crop&w=1600&q=80" alt="Project 3"><div style="padding:10px"><strong>Portfolio Template</strong><p style="margin:6px 0 0;color:var(--muted)">Reusable responsive template.</p></div></article>
+        </div>
+      </section>
+
+      <section id="contact" style="margin-top:14px" class="card">
+        <h3>Contact</h3>
+        <form onsubmit="handleContact(event)">
+          <input id="name" placeholder="Your name" required>
+          <input id="email" type="email" placeholder="Your email" required>
+          <textarea id="message" placeholder="Message" required></textarea>
+          <div style="display:flex; gap:10px; align-items:center">
+            <button class="btn btn-primary" type="submit">Send message</button>
+            <div style="color:var(--muted)">or email: <strong>muhammadshawaizjutt18@gmail.com</strong></div>
+          </div>
+        </form>
+      </section>
+
+      <footer>
+        <div>© <span id="year"></span> Muhammad Shawaiz</div>
+        <div style="color:var(--muted)">Made with ❤️ — Space Theme</div>
+      </footer>
+
+    </main>
+  </div>
+
+  <div class="cursor" id="cursor"></div>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Smooth scroll
+    document.getElementById('view-work').addEventListener('click', ()=> document.querySelector('#projects').scrollIntoView({behavior:'smooth'}));
+
+    // Contact demo
+    function handleContact(e){ e.preventDefault(); const n=document.getElementById('name').value.trim(); if(!n) return alert('Please enter name'); alert('Thanks '+n+' — message sent (demo)'); e.target.reset(); }
+
+    // Custom cursor that changes on hover
+    const cursor = document.getElementById('cursor');
+    let mouseX=0, mouseY=0;
+    document.addEventListener('mousemove', (e) => { mouseX=e.clientX; mouseY=e.clientY; cursor.style.left=mouseX+'px'; cursor.style.top=mouseY+'px'; cursor.style.transform='translate(-50%,-50%) scale(1)'; });
+
+    // enlarge cursor on interactive elements
+    const interactive = document.querySelectorAll('a, button, input, textarea, .social-card');
+    interactive.forEach(el=>{
+      el.addEventListener('mouseenter', ()=>{
+        cursor.style.width='36px'; cursor.style.height='36px'; cursor.style.background='radial-gradient(circle at 30% 30%, rgba(255,255,255,0.18), rgba(124,58,237,0.22))';
+      });
+      el.addEventListener('mouseleave', ()=>{
+        cursor.style.width='var(--cursor-size)'; cursor.style.height='var(--cursor-size)'; cursor.style.background='transparent';
+      });
+    });
+
+    // color shift on hover over social icons (change cursor + subtle page tint)
+    document.querySelectorAll('.social-card').forEach(card=>{
+      card.addEventListener('mouseenter', ()=>{
+        document.body.style.setProperty('--accent-2','#ffb86b');
+      });
+      card.addEventListener('mouseleave', ()=>{
+        document.body.style.setProperty('--accent-2','#06b6d4');
+      });
+    });
+
+    // keyboard accessible project cards
+    document.querySelectorAll('.project').forEach(p=>{
+      p.addEventListener('keydown', ev=>{ if(ev.key==='Enter' || ev.key===' ') p.click(); });
+      p.addEventListener('click', ()=>{ const t=p.querySelector('strong')?.textContent||'Project'; alert(t+' — demo preview'); });
+    });
+  </script>
+</body>
+</html>
